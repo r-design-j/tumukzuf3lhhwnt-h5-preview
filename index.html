@@ -427,17 +427,25 @@
         return '';
       }
 
-      function resolvePeriod() {
+      function resolveAutoPeriod(now) {
+        var minutes = now.getHours() * 60 + now.getMinutes();
+        return minutes < 15 * 60 ? 'noon' : 'evening';
+      }
+
+      function resolvePeriod(now) {
         var value = getParam('period') || getParam('session') || getParam('type');
         if (value === 'noon' || value === 'lunch' || value === 'midday' || value === '午场' || value === '中午') {
           return 'noon';
         }
-        return 'evening';
+        if (value === 'evening' || value === 'night' || value === '晚场' || value === '晚上') {
+          return 'evening';
+        }
+        return resolveAutoPeriod(now);
       }
 
       function updateDate() {
         var now = new Date();
-        var period = resolvePeriod();
+        var period = resolvePeriod(now);
         var course = courseMap[period];
         var dateText = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) + '（' + weekdays[now.getDay()] + '）';
         var dateNode = document.getElementById('courseDate');
