@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="format-detection" content="telephone=no,email=no,address=no">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
+  <title>元中心晚场</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      min-height: 100%;
+      background: #ffffff;
+      font-size: 13.333333vw;
+    }
+
+    body {
+      min-height: 100%;
+      margin: 0;
+      overflow-x: hidden;
+      background: #ffffff;
+      color: #1d1d1f;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      font-weight: 400;
+      letter-spacing: 0;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      margin: 0 auto;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .hero-card {
+      height: 3.96rem;
+      margin: 0.28rem 0.4rem 0.54rem;
+      overflow: hidden;
+      border-radius: 0.08rem;
+      background: #f2f2f7;
+      box-shadow: 0 0.04rem 0.12rem rgba(0, 0, 0, 0.06);
+    }
+
+    .hero-image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .coach-row {
+      display: flex;
+      align-items: center;
+      min-height: 1.28rem;
+      padding: 0 0.4rem 0.36rem;
+      background: #ffffff;
+    }
+
+    .coach-avatar {
+      flex: 0 0 auto;
+      width: 1.12rem;
+      height: 1.12rem;
+      overflow: hidden;
+      border-radius: 50%;
+      background: #9fc8ff;
+      object-fit: cover;
+    }
+
+    .coach-copy {
+      flex: 1;
+      min-width: 0;
+      margin-left: 0.28rem;
+    }
+
+    .coach-name-line {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .coach-name {
+      display: block;
+      max-width: 4.5rem;
+      overflow: hidden;
+      color: #111111;
+      font-size: 0.32rem;
+      font-weight: 600;
+      line-height: 0.42rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .male-symbol {
+      flex: 0 0 auto;
+      display: block;
+      width: 0.34rem;
+      height: 0.34rem;
+      margin-left: 0.18rem;
+    }
+
+    .share-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 1.5rem;
+      width: 1.5rem;
+      height: 0.64rem;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0.34rem;
+      background: #34c759;
+      color: #ffffff;
+      font-size: 0.28rem;
+      font-weight: 400;
+      line-height: 0.64rem;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .share-button:active {
+      background: #30b753;
+    }
+
+    .share-symbol {
+      display: block;
+      width: 0.38rem;
+      height: 0.38rem;
+      margin-right: 0.14rem;
+    }
+
+    .soft-divider {
+      height: 0.22rem;
+      background: #fafafa;
+    }
+
+    .info-list {
+      background: #ffffff;
+    }
+
+    .info-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-height: 1.16rem;
+      margin-left: 0.4rem;
+      padding-right: 0.4rem;
+      border-bottom: 1px solid #ededf2;
+    }
+
+    .date-row {
+      min-height: 1.28rem;
+    }
+
+    .location-row {
+      min-height: 1.22rem;
+      border-bottom: 0;
+    }
+
+    .row-icon {
+      display: block;
+      flex: 0 0 0.46rem;
+      width: 0.46rem;
+      height: 0.46rem;
+      margin-right: 0.28rem;
+    }
+
+    .row-text {
+      display: block;
+      flex: 1;
+      min-width: 0;
+      color: #111111;
+      font-size: 0.3rem;
+      font-weight: 400;
+      line-height: 0.42rem;
+    }
+
+    .strong-text {
+      font-weight: 500;
+    }
+
+    .map-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 0.78rem;
+      width: 0.78rem;
+      height: 0.78rem;
+      margin: 0 0.1rem 0 0.24rem;
+      border-radius: 50%;
+      background: rgba(247, 247, 247, 0.96);
+      box-shadow: 0 0.06rem 0.16rem rgba(0, 0, 0, 0.045);
+    }
+
+    .map-arrow {
+      display: block;
+      width: 0.44rem;
+      height: 0.44rem;
+    }
+
+    .booking-row {
+      display: flex;
+      align-items: center;
+      min-height: 1.5rem;
+      padding: 0 0.4rem;
+      background: #ffffff;
+    }
+
+    .booking-icon {
+      display: block;
+      flex: 0 0 0.46rem;
+      width: 0.46rem;
+      height: 0.46rem;
+      margin-right: 0.28rem;
+    }
+
+    .booking-text {
+      color: #fa5151;
+      font-size: 0.3rem;
+      font-weight: 500;
+      line-height: 0.42rem;
+    }
+
+    .detail-section {
+      padding: 0.46rem 0.4rem 0.1rem;
+      background: #ffffff;
+    }
+
+    .strength-section {
+      padding-top: 0.7rem;
+    }
+
+    .intro-section {
+      padding-top: 0.54rem;
+      padding-bottom: calc(1.52rem + env(safe-area-inset-bottom));
+    }
+
+    .section-title-row {
+      display: flex;
+      align-items: center;
+    }
+
+    .red-ring {
+      width: 0.18rem;
+      height: 0.18rem;
+      margin-right: 0.16rem;
+      border: 0.05rem solid #fa5151;
+      border-radius: 50%;
+      background: #ffffff;
+    }
+
+    .section-title {
+      color: #111111;
+      font-size: 0.32rem;
+      font-weight: 600;
+      line-height: 0.42rem;
+    }
+
+    .section-body {
+      display: block;
+      margin: 0.32rem 0 0;
+      color: #666666;
+      font-size: 0.3rem;
+      font-weight: 400;
+      line-height: 0.5rem;
+    }
+
+    .short-body {
+      margin-top: 0.26rem;
+      line-height: 0.4rem;
+    }
+
+    .stars {
+      display: flex;
+      align-items: center;
+      margin-top: 0.34rem;
+    }
+
+    .star-icon {
+      display: block;
+      width: 0.44rem;
+      height: 0.44rem;
+    }
+
+    .star-icon + .star-icon {
+      margin-left: 0.16rem;
+    }
+
+    @media screen and (min-width: 431px) {
+      html {
+        background: #f5f5f7;
+        font-size: 57.333333px;
+      }
+
+      body {
+        background: #f5f5f7;
+      }
+
+      .app-shell {
+        max-width: 430px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero-card">
+      <img class="hero-image" src="assets/venue-hero.jpg" alt="">
+    </section>
+
+    <section class="coach-row">
+      <img class="coach-avatar" src="assets/coach-avatar.jpg" alt="">
+      <div class="coach-copy">
+        <div class="coach-name-line">
+          <span class="coach-name">王涛（元中心场地）</span>
+          <img class="male-symbol" src="assets/icon-male.png" alt="">
+        </div>
+      </div>
+      <button class="share-button" type="button" id="shareButton">
+        <img class="share-symbol" src="assets/icon-share.png" alt="">
+        <span>分享</span>
+      </button>
+    </section>
+
+    <div class="soft-divider"></div>
+
+    <section class="info-list">
+      <div class="info-row date-row">
+        <img class="row-icon" src="assets/icon-calendar.png" alt="">
+        <span class="row-text strong-text" id="courseDate">2026-06-03（周三） 18:00-19:00</span>
+      </div>
+      <div class="info-row">
+        <img class="row-icon" src="assets/icon-group.png" alt="">
+        <span class="row-text">团体课</span>
+      </div>
+      <div class="info-row">
+        <img class="row-icon" src="assets/icon-room.png" alt="">
+        <span class="row-text">元中心健身房</span>
+      </div>
+      <div class="info-row location-row">
+        <img class="row-icon" src="assets/icon-store.png" alt="">
+        <span class="row-text">小米健身房（元中心）</span>
+        <div class="map-button">
+          <img class="map-arrow" src="assets/icon-navigation.png" alt="">
+        </div>
+      </div>
+    </section>
+
+    <div class="soft-divider"></div>
+
+    <section class="booking-row">
+      <img class="booking-icon" src="assets/icon-booking.png" alt="">
+      <span class="booking-text">25人已预约</span>
+    </section>
+
+    <div class="soft-divider"></div>
+
+    <section class="detail-section">
+      <div class="section-title-row">
+        <span class="red-ring"></span>
+        <span class="section-title">训练目的</span>
+      </div>
+      <p class="section-body short-body">其他</p>
+    </section>
+
+    <section class="detail-section strength-section">
+      <div class="section-title-row">
+        <span class="red-ring"></span>
+        <span class="section-title">训练强度</span>
+      </div>
+      <div class="stars">
+        <img class="star-icon" src="assets/icon-star-active.png" alt="">
+        <img class="star-icon" src="assets/icon-star-muted.png" alt="">
+        <img class="star-icon" src="assets/icon-star-muted.png" alt="">
+        <img class="star-icon" src="assets/icon-star-muted.png" alt="">
+        <img class="star-icon" src="assets/icon-star-muted.png" alt="">
+      </div>
+    </section>
+
+    <section class="detail-section intro-section">
+      <div class="section-title-row">
+        <span class="red-ring"></span>
+        <span class="section-title">课程介绍</span>
+      </div>
+      <p class="section-body">每天早上11点，系统上线第二天入场预约，凭预约进场训练，无预约无法进去场地训练</p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      var courseMap = {
+        noon: { title: '元中心午场', timeRange: '11:30-12:30' },
+        evening: { title: '元中心晚场', timeRange: '18:00-19:00' }
+      };
+
+      function pad(value) {
+        return value < 10 ? '0' + value : String(value);
+      }
+
+      function getParam(name) {
+        var search = window.location.search || '';
+        var hash = window.location.hash || '';
+        var source = search;
+        if (!source && hash.indexOf('?') >= 0) {
+          source = hash.slice(hash.indexOf('?'));
+        }
+        var query = source.charAt(0) === '?' ? source.slice(1) : source;
+        var pairs = query ? query.split('&') : [];
+        for (var i = 0; i < pairs.length; i += 1) {
+          var pair = pairs[i].split('=');
+          if (decodeURIComponent(pair[0] || '') === name) {
+            return decodeURIComponent(pair.slice(1).join('=') || '');
+          }
+        }
+        return '';
+      }
+
+      function resolvePeriod() {
+        var value = getParam('period') || getParam('session') || getParam('type');
+        if (value === 'noon' || value === 'lunch' || value === 'midday' || value === '午场' || value === '中午') {
+          return 'noon';
+        }
+        return 'evening';
+      }
+
+      function updateDate() {
+        var now = new Date();
+        var period = resolvePeriod();
+        var course = courseMap[period];
+        var dateText = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()) + '（' + weekdays[now.getDay()] + '）';
+        var dateNode = document.getElementById('courseDate');
+        if (dateNode) {
+          dateNode.innerText = dateText + ' ' + course.timeRange;
+        }
+        document.title = course.title;
+      }
+
+      function msUntilNextLocalDay() {
+        var now = new Date();
+        var next = new Date(now.getTime());
+        next.setHours(24, 0, 1, 0);
+        return Math.max(1000, next.getTime() - now.getTime());
+      }
+
+      function scheduleDateRefresh() {
+        window.setTimeout(function () {
+          updateDate();
+          scheduleDateRefresh();
+        }, msUntilNextLocalDay());
+      }
+
+      function setupShare() {
+        var button = document.getElementById('shareButton');
+        if (!button) return;
+        button.onclick = function () {
+          var title = document.title;
+          var url = window.location.href;
+          if (navigator.share) {
+            navigator.share({ title: title, url: url }).catch(function () {});
+            return;
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).catch(function () {});
+          }
+        };
+      }
+
+      updateDate();
+      scheduleDateRefresh();
+      setupShare();
+    }());
+  </script>
+</body>
+</html>
