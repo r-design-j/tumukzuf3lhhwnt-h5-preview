@@ -6,7 +6,7 @@
   <meta name="format-detection" content="telephone=no,email=no,address=no">
   <meta name="theme-color" content="#ffffff">
   <meta name="color-scheme" content="light">
-  <title>元中心晚场</title>
+  <title>元中心健身房</title>
   <style>
     * {
       box-sizing: border-box;
@@ -60,10 +60,12 @@
     }
 
     .coach-row {
+      position: relative;
       display: flex;
       align-items: center;
+      gap: 0.28rem;
       min-height: 1.28rem;
-      padding: 0 0.4rem 0.36rem;
+      padding: 0 2.3rem 0.36rem 0.4rem;
       background: #ffffff;
     }
 
@@ -78,20 +80,24 @@
     }
 
     .coach-copy {
-      flex: 1;
+      flex: 1 1 0;
       min-width: 0;
-      margin-left: 0.28rem;
+      overflow: hidden;
     }
 
     .coach-name-line {
       display: flex;
       align-items: center;
+      width: 100%;
       min-width: 0;
+      overflow: hidden;
     }
 
     .coach-name {
       display: block;
-      max-width: 4.5rem;
+      flex: 0 1 auto;
+      max-width: 100%;
+      min-width: 0;
       overflow: hidden;
       color: #111111;
       font-size: 0.32rem;
@@ -110,14 +116,18 @@
     }
 
     .share-button {
+      position: absolute;
+      top: 0.24rem;
+      right: 0.4rem;
       display: flex;
       align-items: center;
       justify-content: center;
       flex: 0 0 1.5rem;
       width: 1.5rem;
       height: 0.64rem;
+      min-width: 0;
       margin: 0;
-      padding: 0;
+      padding: 0 0.24rem;
       border: 0;
       border-radius: 0.34rem;
       background: #34c759;
@@ -125,6 +135,7 @@
       font-size: 0.28rem;
       font-weight: 400;
       line-height: 0.64rem;
+      white-space: nowrap;
       appearance: none;
       -webkit-appearance: none;
     }
@@ -138,6 +149,14 @@
       width: 0.38rem;
       height: 0.38rem;
       margin-right: 0.14rem;
+    }
+
+    .share-label {
+      position: static;
+      display: block;
+      width: auto;
+      height: auto;
+      overflow: visible;
     }
 
     .soft-divider {
@@ -329,7 +348,7 @@
       </div>
       <button class="share-button" type="button" id="shareButton">
         <img class="share-symbol" src="assets/icon-share.png" alt="">
-        <span>分享</span>
+        <span class="share-label">分享</span>
       </button>
     </section>
 
@@ -432,13 +451,24 @@
         return minutes < 15 * 60 ? 'noon' : 'evening';
       }
 
-      function resolvePeriod(now) {
-        var value = getParam('period') || getParam('session') || getParam('type');
+      function resolveExplicitPeriod(value) {
         if (value === 'noon' || value === 'lunch' || value === 'midday' || value === '午场' || value === '中午') {
           return 'noon';
         }
         if (value === 'evening' || value === 'night' || value === '晚场' || value === '晚上') {
           return 'evening';
+        }
+        return '';
+      }
+
+      function getRoutePeriodValue() {
+        return getParam('period') || getParam('session') || getParam('type');
+      }
+
+      function resolvePeriod(now) {
+        var explicitPeriod = resolveExplicitPeriod(getRoutePeriodValue());
+        if (explicitPeriod) {
+          return explicitPeriod;
         }
         return resolveAutoPeriod(now);
       }
@@ -462,11 +492,31 @@
         return Math.max(1000, next.getTime() - now.getTime());
       }
 
+      function msUntilNextAutoPeriodChange() {
+        var now = new Date();
+        var next = new Date(now.getTime());
+        next.setHours(15, 0, 1, 0);
+        if (now.getTime() >= next.getTime()) {
+          next.setDate(next.getDate() + 1);
+          next.setHours(0, 0, 1, 0);
+        }
+        return Math.max(1000, next.getTime() - now.getTime());
+      }
+
+      function msUntilNextNaturalRefresh() {
+        var nextDateRefresh = msUntilNextLocalDay();
+        var explicitPeriod = resolveExplicitPeriod(getRoutePeriodValue());
+        if (explicitPeriod) {
+          return nextDateRefresh;
+        }
+        return Math.min(nextDateRefresh, msUntilNextAutoPeriodChange());
+      }
+
       function scheduleDateRefresh() {
         window.setTimeout(function () {
           updateDate();
           scheduleDateRefresh();
-        }, msUntilNextLocalDay());
+        }, msUntilNextNaturalRefresh());
       }
 
       function setupShare() {
