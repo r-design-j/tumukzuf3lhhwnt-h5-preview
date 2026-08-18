@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="format-detection" content="telephone=no,email=no,address=no">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
+  <title>元中心中午场</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { min-height: 100%; background: #fff; font-size: 13.333333vw; }
+    body {
+      min-height: 100%; margin: 0; overflow-x: hidden; background: #fff; color: #111;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      font-weight: 400; letter-spacing: 0; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+      scrollbar-width: none;
+    }
+    body::-webkit-scrollbar { display: none; }
+    button { font: inherit; }
+    .app-shell {
+      width: 100vw; min-height: 100vh; margin: 0 auto; padding-bottom: calc(1.96rem + env(safe-area-inset-bottom));
+      overflow-x: hidden; background: #fff;
+    }
+    .hero-card {
+      height: 3.76rem; margin: .28rem .4rem 0; overflow: hidden; border-radius: .12rem;
+      background: #f2f2f7; box-shadow: 0 .1rem .22rem rgba(0,0,0,.12);
+    }
+    .hero-image { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .course-overview { padding: 0 .4rem; background: #fff; }
+    .course-heading { position: relative; padding: .52rem 0 .3rem; }
+    .course-title, .course-type, .course-schedule, .venue-name, .venue-address, .coach-name, .intro-copy { display: block; }
+    .course-title { color: #111; font-size: .38rem; font-weight: 650; line-height: .5rem; }
+    .course-type { margin-top: .22rem; color: #666; font-size: .28rem; line-height: .34rem; }
+    .course-schedule { margin-top: .12rem; color: #666; font-size: .28rem; line-height: .36rem; white-space: nowrap; }
+    .share-button {
+      position: absolute; top: .42rem; right: -.4rem; display: flex; align-items: center; justify-content: flex-start;
+      width: 1.1rem; height: .5rem; margin: 0; padding: 0 .08rem; border: 0; border-radius: .25rem;
+      background: #00c853; color: #fff; font-size: .24rem; font-weight: 500; line-height: .5rem;
+      white-space: nowrap; appearance: none; -webkit-appearance: none;
+    }
+    .share-button:active { background: #00b84c; }
+    .share-symbol { display: block; width: .28rem; height: .28rem; margin-right: .04rem; }
+    .content-rule { height: 1px; background: #ececef; }
+    .venue-row { display: flex; align-items: center; min-height: 1.36rem; padding: .34rem 0 .28rem; }
+    .venue-copy { flex: 1 1 auto; min-width: 0; }
+    .venue-name { color: #111; font-size: .28rem; font-weight: 650; line-height: .36rem; }
+    .venue-address {
+      margin-top: .04rem; overflow: hidden; color: #666; font-size: .24rem; line-height: .34rem;
+      text-overflow: ellipsis; white-space: nowrap;
+    }
+    .map-button {
+      display: flex; align-items: center; justify-content: center; flex: 0 0 .76rem; width: .76rem; height: .76rem;
+      margin-left: .18rem; border-radius: 50%; background: #fff;
+    }
+    .map-arrow { display: block; width: .76rem; height: .76rem; border-radius: 50%; }
+    .soft-divider { height: .2rem; background: #fafafa; }
+    .booking-row { display: flex; align-items: center; min-height: 1.28rem; padding: 0 .4rem; background: #fff; }
+    .booking-icon { display: block; flex: 0 0 .32rem; width: .32rem; height: .26rem; margin-right: .06rem; }
+    .booking-text { color: #ff3b30; font-size: .28rem; font-weight: 400; line-height: .42rem; }
+    .coach-row { display: flex; align-items: center; min-height: 1.32rem; padding: .34rem .4rem .22rem; background: #fff; }
+    .coach-avatar { display: block; flex: 0 0 .64rem; width: .64rem; height: .64rem; border-radius: 50%; object-fit: cover; background: #9fc8ff; }
+    .coach-copy { flex: 1 1 auto; min-width: 0; margin-left: .14rem; }
+    .coach-name-line, .coach-meta { display: flex; align-items: center; }
+    .coach-name { color: #111; font-size: .3rem; font-weight: 650; line-height: .4rem; white-space: nowrap; }
+    .male-symbol { display: block; width: .26rem; height: .26rem; margin-left: .16rem; }
+    .coach-meta { margin-top: .06rem; color: #666; font-size: .26rem; line-height: .34rem; }
+    .coach-tag { margin-left: .16rem; padding: .02rem .12rem; border-radius: .22rem; background: #f5f5f7; color: #666; font-size: .22rem; line-height: .3rem; }
+    .course-details { padding: 0 .4rem; background: #fff; }
+    .detail-row { display: flex; align-items: center; justify-content: space-between; min-height: 1.2rem; }
+    .detail-title { display: block; color: #111; font-size: .3rem; font-weight: 650; line-height: .44rem; }
+    .detail-value { color: #666; font-size: .3rem; line-height: .42rem; }
+    .stars { display: flex; align-items: center; }
+    .star-icon { display: block; width: .36rem; height: .36rem; }
+    .star-icon + .star-icon { margin-left: .08rem; }
+    .intro-section { padding: .28rem 0 .66rem; }
+    .intro-copy { margin-top: .16rem; color: #666; font-size: .26rem; font-weight: 400; line-height: .5rem; }
+    .booking-footer {
+      position: fixed; z-index: 20; right: 0; bottom: 0; left: 0; width: 100vw; max-width: 430px;
+      padding: .16rem .4rem calc(.22rem + max(env(safe-area-inset-bottom), .62rem));
+      border-top: 1px solid #eeeeef; background: rgba(255,255,255,.98);
+    }
+    .booking-button {
+      display: flex; align-items: center; justify-content: center; width: 100%; height: .88rem; margin: 0; padding: 0;
+      border: 0; border-radius: .48rem; background: #ff3737; color: #fff; font-size: .32rem; font-weight: 400;
+      line-height: .88rem; appearance: none; -webkit-appearance: none;
+    }
+    .booking-button:active { background: #ed2f2f; }
+    .booking-button.is-joined { background: #8e8e93; }
+    .status-toast {
+      position: fixed; z-index: 30; left: 50%; bottom: calc(1.55rem + env(safe-area-inset-bottom));
+      padding: .16rem .26rem; transform: translateX(-50%) translateY(.2rem); border-radius: .16rem;
+      background: rgba(0,0,0,.76); color: #fff; font-size: .26rem; opacity: 0; pointer-events: none; transition: .18s ease;
+    }
+    .status-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media screen and (min-width: 431px) {
+      html { background: #f5f5f7; font-size: 57.333333px; }
+      body { background: #f5f5f7; }
+      .app-shell { max-width: 430px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero-card">
+      <img class="hero-image" src="assets/venue-hero.jpg" alt="元中心入场课程">
+    </section>
+
+    <section class="course-overview">
+      <div class="course-heading">
+        <span class="course-title" id="courseTitle">元中心中午场</span>
+        <span class="course-type">团体课</span>
+        <span class="course-schedule" id="courseDate">2026-08-18（周二） 12:00-13:00</span>
+        <button class="share-button" type="button" id="shareButton" aria-label="分享课程">
+          <img class="share-symbol" src="assets/icon-share.png" alt="">
+          <span>分享</span>
+        </button>
+      </div>
+      <div class="content-rule"></div>
+      <div class="venue-row">
+        <div class="venue-copy">
+          <span class="venue-name">小米健身房（元中心）</span>
+          <span class="venue-address">北京市海淀区清河街道西二旗西路16号院上地·元中心</span>
+        </div>
+        <div class="map-button" role="img" aria-label="场馆导航">
+          <img class="map-arrow" src="assets/icon-navigation.png" alt="">
+        </div>
+      </div>
+    </section>
+
+    <div class="soft-divider"></div>
+
+    <section class="booking-row">
+      <img class="booking-icon" src="assets/icon-booking.png" alt="">
+      <span class="booking-text">25人已预约</span>
+    </section>
+
+    <div class="soft-divider"></div>
+
+    <section class="coach-row">
+      <img class="coach-avatar" src="assets/coach-avatar.jpg" alt="王涛">
+      <div class="coach-copy">
+        <div class="coach-name-line">
+          <span class="coach-name">王涛（场地）</span>
+          <img class="male-symbol" src="assets/icon-male.png" alt="男">
+        </div>
+        <div class="coach-meta">
+          <span>累计上课 20 节</span>
+          <span class="coach-tag">普通</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="soft-divider"></div>
+
+    <section class="course-details">
+      <div class="detail-row">
+        <span class="detail-title">课程强度</span>
+        <div class="stars" aria-label="课程强度一星">
+          <img class="star-icon" src="assets/icon-star-active.png" alt="">
+          <img class="star-icon" src="assets/icon-star-muted.png" alt="">
+          <img class="star-icon" src="assets/icon-star-muted.png" alt="">
+          <img class="star-icon" src="assets/icon-star-muted.png" alt="">
+          <img class="star-icon" src="assets/icon-star-muted.png" alt="">
+        </div>
+      </div>
+      <div class="content-rule"></div>
+      <div class="detail-row">
+        <span class="detail-title">训练目的</span>
+        <span class="detail-value">其他</span>
+      </div>
+      <div class="content-rule"></div>
+      <div class="intro-section">
+        <span class="detail-title">课程介绍</span>
+        <span class="intro-copy">每天早上11点，系统上线第二天入场预约，凭预约进场训练，无预约无法进去场地训练</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="booking-footer">
+    <button class="booking-button" type="button" id="bookingButton" aria-pressed="false">候补</button>
+  </footer>
+  <div class="status-toast" id="statusToast" role="status"></div>
+
+  <script>
+    (function () {
+      var weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      var courseMap = {
+        noon: { title: '元中心中午场', timeRange: '12:00-13:00' },
+        evening: { title: '元中心晚场', timeRange: '18:00-19:00' }
+      };
+      var hasJoinedWaitlist = false;
+      var toastTimer = null;
+
+      function pad(value) { return value < 10 ? '0' + value : String(value); }
+
+      function getParam(name) {
+        var source = window.location.search || '';
+        var hash = window.location.hash || '';
+        if (!source && hash.indexOf('?') >= 0) source = hash.slice(hash.indexOf('?'));
+        var query = source.charAt(0) === '?' ? source.slice(1) : source;
+        var pairs = query ? query.split('&') : [];
+        for (var i = 0; i < pairs.length; i += 1) {
+          var pair = pairs[i].split('=');
+          if (decodeURIComponent(pair[0] || '') === name) return decodeURIComponent(pair.slice(1).join('=') || '');
+        }
+        return '';
+      }
+
+      function resolvePeriod() {
+        var value = getParam('period') || getParam('session') || getParam('type');
+        if (value === 'evening' || value === 'night' || value === '晚场' || value === '晚上') return 'evening';
+        return 'noon';
+      }
+
+      function updateCourse() {
+        var now = new Date();
+        var courseDate = new Date(now.getTime());
+        courseDate.setDate(courseDate.getDate() + 1);
+        var course = courseMap[resolvePeriod()];
+        var dateText = courseDate.getFullYear() + '-' + pad(courseDate.getMonth() + 1) + '-' + pad(courseDate.getDate()) + '（' + weekdays[courseDate.getDay()] + '）';
+        document.getElementById('courseTitle').textContent = course.title;
+        document.getElementById('courseDate').textContent = dateText + ' ' + course.timeRange;
+        document.title = course.title;
+      }
+
+      function msUntilNextLocalDay() {
+        var now = new Date();
+        var next = new Date(now.getTime());
+        next.setHours(24, 0, 1, 0);
+        return Math.max(1000, next.getTime() - now.getTime());
+      }
+
+      function scheduleDateRefresh() {
+        window.setTimeout(function () { updateCourse(); scheduleDateRefresh(); }, msUntilNextLocalDay());
+      }
+
+      function showToast(message) {
+        var toast = document.getElementById('statusToast');
+        window.clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add('show');
+        toastTimer = window.setTimeout(function () { toast.classList.remove('show'); }, 1400);
+      }
+
+      document.getElementById('bookingButton').addEventListener('click', function () {
+        hasJoinedWaitlist = !hasJoinedWaitlist;
+        this.textContent = hasJoinedWaitlist ? '已候补' : '候补';
+        this.classList.toggle('is-joined', hasJoinedWaitlist);
+        this.setAttribute('aria-pressed', String(hasJoinedWaitlist));
+        showToast(hasJoinedWaitlist ? '已加入候补' : '已取消候补');
+      });
+
+      document.getElementById('shareButton').addEventListener('click', function () {
+        var url = window.location.href;
+        if (navigator.share) {
+          navigator.share({ title: document.title, url: url }).catch(function () {});
+          return;
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(function () { showToast('链接已复制'); }).catch(function () {});
+        }
+      });
+
+      updateCourse();
+      scheduleDateRefresh();
+    }());
+  </script>
+</body>
+</html>
