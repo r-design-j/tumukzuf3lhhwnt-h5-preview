@@ -6,7 +6,7 @@
   <meta name="format-detection" content="telephone=no,email=no,address=no">
   <meta name="theme-color" content="#ffffff">
   <meta name="color-scheme" content="light">
-  <title>元中心中午场</title>
+  <title>元中心当前场</title>
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html { min-height: 100%; background: #fafafa; font-size: 13.333333vw; scrollbar-width: none; }
@@ -91,7 +91,7 @@
   <main class="app-shell">
     <section class="hero-card">
       <img class="hero-image" src="assets/venue-hero.jpg" alt="元中心入场课程">
-      <span class="hero-title" id="courseTitle">元中心中午场</span>
+      <span class="hero-title" id="courseTitle">元中心当前场</span>
     </section>
 
     <section class="coach-row">
@@ -111,7 +111,7 @@
     <section class="info-list">
       <div class="info-row date-row">
         <img class="row-icon" src="assets/icon-calendar.png" alt="">
-        <span class="row-text strong-text" id="courseDate">2026-08-19（周三） 12:00-13:00</span>
+        <span class="row-text strong-text" id="courseDate">正在读取当前时间</span>
       </div>
       <div class="info-row">
         <img class="row-icon" src="assets/icon-group.png" alt="">
@@ -202,15 +202,24 @@
         return '';
       }
 
-      function resolvePeriod(now) {
-        return resolveExplicitPeriod() || (now.getHours() < 15 ? 'noon' : 'evening');
+      function resolveCourse(now) {
+        var explicitPeriod = resolveExplicitPeriod();
+        if (explicitPeriod) return courseMap[explicitPeriod];
+
+        var startHour = now.getHours();
+        var endHour = (startHour + 1) % 24;
+        var startText = pad(startHour) + ':00';
+        var endText = pad(endHour) + ':00';
+        return {
+          title: '元中心' + startText + '场',
+          timeRange: startText + '-' + endText
+        };
       }
 
       function updateCourse() {
         var now = new Date();
         var courseDate = new Date(now.getTime());
-        courseDate.setDate(courseDate.getDate() + 1);
-        var course = courseMap[resolvePeriod(now)];
+        var course = resolveCourse(now);
         var dateText = courseDate.getFullYear() + '-' + pad(courseDate.getMonth() + 1) + '-' + pad(courseDate.getDate()) + '（' + weekdays[courseDate.getDay()] + '）';
         document.getElementById('courseTitle').textContent = course.title;
         document.getElementById('courseDate').textContent = dateText + ' ' + course.timeRange;
@@ -223,21 +232,17 @@
         return Math.max(1000, next.getTime() - now.getTime());
       }
 
-      function msUntilNextAutoPeriodChange(now) {
+      function msUntilNextLocalHour(now) {
         var next = new Date(now.getTime());
-        next.setHours(15, 0, 1, 0);
-        if (now.getTime() >= next.getTime()) {
-          next.setDate(next.getDate() + 1);
-          next.setHours(0, 0, 1, 0);
-        }
+        next.setHours(next.getHours() + 1, 0, 0, 0);
         return Math.max(1000, next.getTime() - now.getTime());
       }
 
       function scheduleCourseRefresh() {
         var now = new Date();
         var nextDateRefresh = msUntilNextLocalDay(now);
-        var nextPeriodRefresh = resolveExplicitPeriod() ? nextDateRefresh : msUntilNextAutoPeriodChange(now);
-        window.setTimeout(function () { updateCourse(); scheduleCourseRefresh(); }, Math.min(nextDateRefresh, nextPeriodRefresh));
+        var nextCourseRefresh = resolveExplicitPeriod() ? nextDateRefresh : msUntilNextLocalHour(now);
+        window.setTimeout(function () { updateCourse(); scheduleCourseRefresh(); }, Math.min(nextDateRefresh, nextCourseRefresh));
       }
 
       function showToast(message) {
