@@ -50,7 +50,13 @@
       display: flex; align-items: center; min-height: .96rem; margin-left: .4rem; padding-right: .4rem;
       border-bottom: 1px solid #ededf2;
     }
-    .date-row { min-height: .96rem; }
+    .date-row { position: relative; min-height: .96rem; }
+    .time-select {
+      position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0;
+      border: 0; outline: 0; background: transparent; color: transparent; cursor: pointer; font-size: 16px;
+      appearance: none; -webkit-appearance: none;
+    }
+    .time-select option { color: #111; background: #fff; }
     .location-row { min-height: 1.04rem; padding-right: .36rem; border-bottom: 0; }
     .row-icon { display: block; flex: 0 0 .32rem; width: .32rem; height: .32rem; margin-right: .08rem; }
     .row-text { display: block; flex: 1; min-width: 0; color: #111; font-size: .28rem; font-weight: 500; line-height: .4rem; }
@@ -112,6 +118,9 @@
       <div class="info-row date-row">
         <img class="row-icon" src="assets/icon-calendar.png" alt="">
         <span class="row-text strong-text" id="courseDate">正在读取当前时间</span>
+        <select class="time-select" id="courseTimeSelect" aria-label="选择时段" aria-describedby="courseDate">
+          <option value="auto">跟随当前时间</option>
+        </select>
       </div>
       <div class="info-row">
         <img class="row-icon" src="assets/icon-group.png" alt="">
@@ -178,6 +187,10 @@
         evening: { title: '元中心晚场', timeRange: '18:00-19:00' }
       };
       var toastTimer = null;
+      var courseRefreshTimer = null;
+      var hourParam = getParam('hour');
+      var selectedHour = /^(?:[01]?\d|2[0-3])$/.test(hourParam) ? String(Number(hourParam)) : hourParam === 'auto' ? 'auto' : '';
+      var timeSelect = document.getElementById('courseTimeSelect');
 
       function pad(value) { return value < 10 ? '0' + value : String(value); }
 
@@ -204,9 +217,9 @@
 
       function resolveCourse(now) {
         var explicitPeriod = resolveExplicitPeriod();
-        if (explicitPeriod) return courseMap[explicitPeriod];
+        if (!selectedHour && explicitPeriod) return courseMap[explicitPeriod];
 
-        var startHour = now.getHours();
+        var startHour = selectedHour && selectedHour !== 'auto' ? Number(selectedHour) : now.getHours();
         var endHour = (startHour + 1) % 24;
         var startText = pad(startHour) + ':00';
         var endText = pad(endHour) + ':00';
@@ -223,6 +236,7 @@
         var dateText = courseDate.getFullYear() + '-' + pad(courseDate.getMonth() + 1) + '-' + pad(courseDate.getDate()) + '（' + weekdays[courseDate.getDay()] + '）';
         document.getElementById('courseTitle').textContent = course.title;
         document.getElementById('courseDate').textContent = dateText + ' ' + course.timeRange;
+        timeSelect.value = selectedHour || (resolveExplicitPeriod() ? String(Number(course.timeRange.slice(0, 2))) : 'auto');
         document.title = course.title;
       }
 
@@ -239,11 +253,35 @@
       }
 
       function scheduleCourseRefresh() {
+        window.clearTimeout(courseRefreshTimer);
         var now = new Date();
         var nextDateRefresh = msUntilNextLocalDay(now);
-        var nextCourseRefresh = resolveExplicitPeriod() ? nextDateRefresh : msUntilNextLocalHour(now);
-        window.setTimeout(function () { updateCourse(); scheduleCourseRefresh(); }, Math.min(nextDateRefresh, nextCourseRefresh));
+        var followsCurrentTime = selectedHour === 'auto' || (!selectedHour && !resolveExplicitPeriod());
+        var nextCourseRefresh = followsCurrentTime ? msUntilNextLocalHour(now) : nextDateRefresh;
+        courseRefreshTimer = window.setTimeout(function () { updateCourse(); scheduleCourseRefresh(); }, Math.min(nextDateRefresh, nextCourseRefresh));
       }
+
+      for (var hour = 0; hour < 24; hour += 1) {
+        var option = document.createElement('option');
+        option.value = String(hour);
+        option.textContent = pad(hour) + ':00-' + pad((hour + 1) % 24) + ':00';
+        timeSelect.appendChild(option);
+      }
+
+      timeSelect.addEventListener('change', function () {
+        selectedHour = timeSelect.value;
+        updateCourse();
+        scheduleCourseRefresh();
+        // Keep reloads and the existing share action on the selected time slot.
+        var url = new URL(window.location.href);
+        url.searchParams.set('hour', selectedHour);
+        window.history.replaceState(null, '', url.href);
+      });
+
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) { updateCourse(); scheduleCourseRefresh(); }
+      });
+      window.addEventListener('pageshow', function () { updateCourse(); scheduleCourseRefresh(); });
 
       function showToast(message) {
         var toast = document.getElementById('statusToast');
