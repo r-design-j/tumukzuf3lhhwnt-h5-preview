@@ -51,12 +51,28 @@
       border-bottom: 1px solid #ededf2;
     }
     .date-row { position: relative; min-height: .96rem; }
-    .time-select {
+    .datetime-trigger {
       position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0;
-      border: 0; outline: 0; background: transparent; color: transparent; cursor: pointer; font-size: 16px;
+      border: 0; background: transparent; cursor: pointer;
       appearance: none; -webkit-appearance: none;
     }
-    .time-select option { color: #111; background: #fff; }
+    .datetime-trigger:focus-visible { outline: 2px solid #00a844; outline-offset: -2px; }
+    .datetime-dialog {
+      width: calc(100% - 32px); max-width: 398px; max-height: calc(100dvh - 32px);
+      margin: auto; padding: 24px; border: 0; border-radius: 16px; color: #111; background: #fff;
+      font-size: 16px; box-shadow: 0 12px 48px rgba(0,0,0,.15);
+    }
+    .datetime-dialog::backdrop { background: rgba(0,0,0,.35); }
+    .datetime-dialog h2 { margin: 0 0 24px; font-size: 18px; line-height: 26px; font-weight: 600; }
+    .picker-label { display: block; margin: 18px 0 8px; color: #666; font-size: 14px; }
+    .picker-field {
+      display: block; width: 100%; min-width: 0; height: 48px; padding: 0 12px; border: 1px solid #e5e5e5;
+      border-radius: 8px; font: inherit; color: #111; background: #fff; color-scheme: light;
+    }
+    .picker-reset { margin: 16px 0 24px; padding: 8px 0; border: 0; background: none; color: #009c40; font-size: 14px; cursor: pointer; }
+    .picker-actions { display: flex; gap: 12px; }
+    .picker-actions button { flex: 1; min-height: 44px; border: 0; border-radius: 8px; background: #f5f5f5; color: #333; cursor: pointer; }
+    .picker-actions .picker-confirm { background: #00c853; color: #fff; }
     .location-row { min-height: 1.04rem; padding-right: .36rem; border-bottom: 0; }
     .row-icon { display: block; flex: 0 0 .32rem; width: .32rem; height: .32rem; margin-right: .08rem; }
     .row-text { display: block; flex: 1; min-width: 0; color: #111; font-size: .28rem; font-weight: 500; line-height: .4rem; }
@@ -118,9 +134,7 @@
       <div class="info-row date-row">
         <img class="row-icon" src="assets/icon-calendar.png" alt="">
         <span class="row-text strong-text" id="courseDate">正在读取当前时间</span>
-        <select class="time-select" id="courseTimeSelect" aria-label="选择时段" aria-describedby="courseDate">
-          <option value="auto">跟随当前时间</option>
-        </select>
+        <button class="datetime-trigger" id="courseDateTimeButton" type="button" aria-label="选择日期和时段" aria-describedby="courseDate" aria-haspopup="dialog" aria-controls="courseDateTimeDialog"></button>
       </div>
       <div class="info-row">
         <img class="row-icon" src="assets/icon-group.png" alt="">
@@ -176,6 +190,20 @@
 
     <div class="page-end-spacer"></div>
   </main>
+  <dialog class="datetime-dialog" id="courseDateTimeDialog" aria-labelledby="dateTimeHeading">
+    <form id="courseDateTimeForm">
+      <h2 id="dateTimeHeading">选择日期和时段</h2>
+      <label class="picker-label" for="courseDateInput">日期</label>
+      <input class="picker-field" id="courseDateInput" type="date" required max="9999-12-31">
+      <label class="picker-label" for="courseTimeSelect">时段</label>
+      <select class="picker-field" id="courseTimeSelect" aria-label="时段"></select>
+      <button class="picker-reset" id="resetDateTimeButton" type="button">恢复当前日期和时间</button>
+      <div class="picker-actions">
+        <button id="cancelDateTimeButton" type="button">取消</button>
+        <button class="picker-confirm" type="submit">确定</button>
+      </div>
+    </form>
+  </dialog>
   <div class="status-toast" id="statusToast" role="status"></div>
 
   <script>
@@ -190,9 +218,26 @@
       var courseRefreshTimer = null;
       var hourParam = getParam('hour');
       var selectedHour = /^(?:[01]?\d|2[0-3])$/.test(hourParam) ? String(Number(hourParam)) : hourParam === 'auto' ? 'auto' : '';
+      var selectedDate = parseLocalDate(getParam('date')) ? getParam('date') : '';
       var timeSelect = document.getElementById('courseTimeSelect');
+      var dateInput = document.getElementById('courseDateInput');
+      var dateTimeDialog = document.getElementById('courseDateTimeDialog');
 
       function pad(value) { return value < 10 ? '0' + value : String(value); }
+
+      function formatLocalDate(date) {
+        return String(date.getFullYear()).padStart(4, '0') + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+      }
+
+      function parseLocalDate(value) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+        var parts = value.split('-').map(Number);
+        if (parts[0] < 1) return null;
+        var date = new Date();
+        date.setHours(12, 0, 0, 0);
+        date.setFullYear(parts[0], parts[1] - 1, parts[2]);
+        return formatLocalDate(date) === value ? date : null;
+      }
 
       function getParam(name) {
         var source = window.location.search || '';
@@ -231,12 +276,11 @@
 
       function updateCourse() {
         var now = new Date();
-        var courseDate = new Date(now.getTime());
+        var courseDate = parseLocalDate(selectedDate) || now;
         var course = resolveCourse(now);
-        var dateText = courseDate.getFullYear() + '-' + pad(courseDate.getMonth() + 1) + '-' + pad(courseDate.getDate()) + '（' + weekdays[courseDate.getDay()] + '）';
+        var dateText = formatLocalDate(courseDate) + '（' + weekdays[courseDate.getDay()] + '）';
         document.getElementById('courseTitle').textContent = course.title;
         document.getElementById('courseDate').textContent = dateText + ' ' + course.timeRange;
-        timeSelect.value = selectedHour || (resolveExplicitPeriod() ? String(Number(course.timeRange.slice(0, 2))) : 'auto');
         document.title = course.title;
       }
 
@@ -268,14 +312,42 @@
         timeSelect.appendChild(option);
       }
 
-      timeSelect.addEventListener('change', function () {
-        selectedHour = timeSelect.value;
+      function applyDateTime() {
         updateCourse();
         scheduleCourseRefresh();
-        // Keep reloads and the existing share action on the selected time slot.
+        // Keep reloads and the existing share action on the selected date and time.
         var url = new URL(window.location.href);
         url.searchParams.set('hour', selectedHour);
+        if (selectedDate) url.searchParams.set('date', selectedDate);
+        else url.searchParams.delete('date');
         window.history.replaceState(null, '', url.href);
+        dateTimeDialog.close();
+      }
+
+      document.getElementById('courseDateTimeButton').addEventListener('click', function () {
+        var now = new Date();
+        dateInput.value = selectedDate || formatLocalDate(now);
+        timeSelect.value = String(Number(resolveCourse(now).timeRange.slice(0, 2)));
+        dateTimeDialog.showModal();
+      });
+
+      document.getElementById('courseDateTimeForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (!parseLocalDate(dateInput.value)) { dateInput.reportValidity(); return; }
+        selectedDate = dateInput.value;
+        selectedHour = timeSelect.value;
+        applyDateTime();
+      });
+
+      document.getElementById('cancelDateTimeButton').addEventListener('click', function () { dateTimeDialog.close(); });
+      document.getElementById('resetDateTimeButton').addEventListener('click', function () {
+        selectedDate = '';
+        selectedHour = 'auto';
+        applyDateTime();
+      });
+      dateTimeDialog.addEventListener('click', function (event) {
+        var bounds = dateTimeDialog.getBoundingClientRect();
+        if (event.target === dateTimeDialog && (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom)) dateTimeDialog.close();
       });
 
       document.addEventListener('visibilitychange', function () {
