@@ -20,7 +20,7 @@
     button { font: inherit; }
     .app-shell { min-height: 100vh; padding-top: 1.159420290rem; padding-bottom: 1.159420290rem; margin: 0 auto; overflow-x: hidden; background: #fff; }
     .miniapp-header { position: fixed; top: 0; left: 50%; z-index: 20; width: min(100%, 414px); transform: translateX(-50%); display: flex; align-items: center; justify-content: center; height: 1.159420290rem; padding-top: 0.362318841rem; background: #fff; }
-    .page-title { margin: 0; color: #111; font-size: .24rem; font-weight: 500; line-height: .4rem; }
+    .page-title { margin: 0; color: #111; font-size: 0.240942029rem; font-weight: 500; line-height: .4rem;  -webkit-font-smoothing: antialiased;}
     .back-button { position: absolute; left: .1rem; bottom: 0; display: grid; place-items: center; width: .6rem; height: .8rem; padding: 0; border: 0; background: transparent; color: #111; }
     .back-button svg { width: .2rem; height: .32rem; }
     .native-capsule { position: absolute; right: 0.108695652rem; bottom: 0.108695652rem; width: 2.155797101rem; height: 0.579710145rem; }
@@ -34,7 +34,7 @@
     .hero-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent, rgba(0,0,0,.5)); pointer-events: none; }
     .hero-image { display: block; width: 100%; height: 100%; object-fit: fill; }
     .hero-title {
-      position: absolute; z-index: 1; bottom: 0.778985507rem; left: 0.407608696rem; color: #fff; font-size: 0.330615942rem; font-weight: 500;
+      position: absolute; z-index: 1; bottom: 0.778985507rem; left: 0.389492754rem; color: #fff; font-size: 0.330615942rem; font-weight: 500;
       line-height: 0.434782609rem; text-shadow: 0 .02rem .06rem rgba(0,0,0,.16);
     }
     .coach-row {
@@ -47,10 +47,11 @@
     .male-symbol { display: block; flex: 0 0 0.244565217rem; width: 0.244565217rem; height: 0.235507246rem; margin-left: 0.099637681rem; }
     .share-button {
       position: absolute; top: 1.068840580rem; right: 0; display: flex; align-items: center; justify-content: flex-start;
-      width: 1.440217391rem; height: 0.471014493rem; min-width: 0; margin: 0; padding: 0 0 0 0.144927536rem; border: 0;
-      border-radius: .24rem 0 0 .24rem; background: #3dcb51; color: #fff; font-size: 0.217391304rem; font-weight: 600;
+      width: 1.440217391rem; height: 0.471014493rem; min-width: 0; margin: 0; padding: 0.018115942rem 0 0 0.144927536rem; border: 0;
+      border-radius: .24rem 0 0 .24rem; background: #3dcb51; color: #fff; font-size: 0.208333333rem; font-weight: 400;
       line-height: 0.471014493rem; appearance: none; -webkit-appearance: none;
     }
+    .share-label { transform: translate(-0.009057971rem, 0.009057971rem); }
     .share-button:active { background: #00b84c; }
     .share-symbol { display: block; width: 0.271739130rem; height: 0.244565217rem; margin-right: 0.144927536rem; }
     .soft-divider { height: 0.199275362rem; background: #fafafa; }
@@ -103,7 +104,7 @@
     .strength-section { padding-top: 0.652173913rem; padding-bottom: 0.072463768rem; }
     .intro-section { padding-top: 0.326086957rem; padding-bottom: 1.096014493rem; }
     .section-title-row { display: flex; align-items: center; }
-    .section-ring { display: block; flex: 0 0 0.181159420rem; width: 0.181159420rem; height: 0.181159420rem; margin-right: 0.072463768rem; }
+    .section-ring { display: block; flex: 0 0 0.181159420rem; width: 0.181159420rem; height: 0.181159420rem; margin-right: 0.072463768rem;  transform: translateY(-0.018115942rem);}
     .section-title { color: #222; font-size: 0.259057971rem; font-weight: 600; line-height: 0.434782609rem;  transform: translateY(-0.022644928rem);}
     .section-body { display: block; margin: 0.235507246rem 0 0; color: #666; font-size: 0.235507246rem; font-weight: 400; line-height: 0.471014493rem; }
     .intro-section .section-body { margin-top: 0.235507246rem; font-size: 0.226449275rem; line-height: 0.398550725rem;  font-weight: 400; transform: translateY(-0.013586957rem);}
@@ -144,7 +145,7 @@
       </div>
       <button class="share-button" type="button" id="shareButton" aria-label="分享课程">
         <img class="share-symbol" src="assets/icon-share.png" alt="">
-        <span>分享</span>
+        <span class="share-label">分享</span>
       </button>
     </section>
 
