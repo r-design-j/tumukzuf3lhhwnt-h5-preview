@@ -260,7 +260,7 @@
       var courseMap = {
         morning: { title: '元中心早场', timeRange: '08:00-09:00' },
         noon: { title: '元中心中午场', timeRange: '12:00-13:00' },
-        evening: { title: '元中心晚场', timeRange: '18:00-19:00' }
+        evening: { title: '元中心夜场', timeRange: '18:00-19:00' }
       };
       var toastTimer = null;
       var courseRefreshTimer = null;
@@ -304,7 +304,7 @@
         var value = getParam('period') || getParam('session') || getParam('type');
         if (value === 'morning' || value === 'early' || value === '早场' || value === '早上') return 'morning';
         if (value === 'noon' || value === 'lunch' || value === 'midday' || value === '午场' || value === '中午') return 'noon';
-        if (value === 'evening' || value === 'night' || value === '晚场' || value === '晚上') return 'evening';
+        if (value === 'evening' || value === 'night' || value === '夜场' || value === '晚场' || value === '晚上') return 'evening';
         return '';
       }
 
@@ -327,7 +327,7 @@
         var startText = pad(startHour) + ':00';
         var endText = pad(endHour) + ':00';
         return {
-          title: '元中心' + startText + '场',
+          title: courseMap[startHour < 15 ? 'noon' : 'evening'].title,
           timeRange: startText + '-' + endText
         };
       }
